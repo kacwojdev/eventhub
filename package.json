@@ -2,7 +2,7 @@
   "name": "eventhub",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "dev": "concurrently --names 'server,client' \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "build": "npm run build --prefix client",
     "seed": "npm run seed --prefix server"
   },
