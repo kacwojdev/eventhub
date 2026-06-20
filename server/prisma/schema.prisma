@@ -1,0 +1,46 @@
+// server/prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime       @default(now())
+  registrations Registration[]
+}
+
+model Event {
+  id            Int            @id @default(autoincrement())
+  title         String
+  description   String
+  location      String
+  date          DateTime
+  capacity      Int
+  imageUrl      String?
+  createdAt     DateTime       @default(now())
+  registrations Registration[]
+}
+
+model Registration {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  eventId   Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
+}
+
+model Admin {
+  id           Int    @id @default(autoincrement())
+  email        String @unique
+  passwordHash String
+}
