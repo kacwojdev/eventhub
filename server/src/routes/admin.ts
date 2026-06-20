@@ -49,7 +49,7 @@ router.post('/login', async (req: Request, res: Response) => {
       res.status(401).json({ error: 'Invalid credentials' })
       return
     }
-    res.json({ token: signAdminToken(admin.id) })
+    res.json({ token: signAdminToken(admin.id), admin: { id: admin.id, email: admin.email } })
   } catch {
     res.status(500).json({ error: 'Internal server error' })
   }
