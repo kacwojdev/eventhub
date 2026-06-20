@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import { z } from 'zod'
+import { Prisma } from '@prisma/client'
 import prisma from '../lib/prisma'
 import { signUserToken } from '../lib/jwt'
 
@@ -24,15 +25,18 @@ router.post('/register', async (req: Request, res: Response) => {
     return
   }
   const { name, email, password } = result.data
-  const existing = await prisma.user.findUnique({ where: { email } })
-  if (existing) {
-    res.status(409).json({ error: 'Email already in use' })
-    return
+  try {
+    const passwordHash = await bcrypt.hash(password, 10)
+    const user = await prisma.user.create({ data: { name, email, passwordHash } })
+    const token = signUserToken(user.id)
+    res.status(201).json({ token, user: { id: user.id, name: user.name, email: user.email } })
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+      res.status(409).json({ error: 'Email already in use' })
+      return
+    }
+    res.status(500).json({ error: 'Internal server error' })
   }
-  const passwordHash = await bcrypt.hash(password, 10)
-  const user = await prisma.user.create({ data: { name, email, passwordHash } })
-  const token = signUserToken(user.id)
-  res.status(201).json({ token, user: { id: user.id, name: user.name, email: user.email } })
 })
 
 router.post('/login', async (req: Request, res: Response) => {
@@ -42,13 +46,17 @@ router.post('/login', async (req: Request, res: Response) => {
     return
   }
   const { email, password } = result.data
-  const user = await prisma.user.findUnique({ where: { email } })
-  if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
-    res.status(401).json({ error: 'Invalid credentials' })
-    return
+  try {
+    const user = await prisma.user.findUnique({ where: { email } })
+    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+      res.status(401).json({ error: 'Invalid credentials' })
+      return
+    }
+    const token = signUserToken(user.id)
+    res.json({ token, user: { id: user.id, name: user.name, email: user.email } })
+  } catch {
+    res.status(500).json({ error: 'Internal server error' })
   }
-  const token = signUserToken(user.id)
-  res.json({ token, user: { id: user.id, name: user.name, email: user.email } })
 })
 
 export default router
