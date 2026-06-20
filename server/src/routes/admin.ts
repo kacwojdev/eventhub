@@ -13,7 +13,8 @@ const router = Router()
 const storage = multer.diskStorage({
   destination: path.join(__dirname, '../../../uploads'),
   filename: (_req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`)
+    const ext = path.extname(file.originalname).toLowerCase()
+    cb(null, `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`)
   },
 })
 const upload = multer({
@@ -137,7 +138,15 @@ router.get('/events/:id/participants', requireAdmin, async (req: AuthRequest, re
   }
 })
 
-router.post('/events/:id/image', requireAdmin, upload.single('image'), async (req: AuthRequest, res: Response) => {
+router.post('/events/:id/image', requireAdmin, (req, res, next) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      res.status(400).json({ error: err.message || 'Upload failed' })
+      return
+    }
+    next()
+  })
+}, async (req: AuthRequest, res: Response) => {
   const id = parseInt(String(req.params.id), 10)
   if (isNaN(id)) { res.status(400).json({ error: 'Invalid id' }); return }
   if (!req.file) {
