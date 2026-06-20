@@ -17,7 +17,7 @@ export default function AdminLogin() {
       const data = await apiFetch<{ token: string }>('/api/admin/login', {
         method: 'POST', body: JSON.stringify({ email, password })
       })
-      login(data.token, { id: 0, name: 'Admin', email }, 'admin')
+      login(data.token, { id: 0, name: email, email }, 'admin')
       navigate('/admin/events')
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Błąd logowania')

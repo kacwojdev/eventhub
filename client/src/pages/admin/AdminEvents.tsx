@@ -12,9 +12,14 @@ export default function AdminEvents() {
   const { token } = useAuth()
   const navigate = useNavigate()
   const [events, setEvents] = useState<Event[]>([])
+  const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState('')
 
   useEffect(() => {
-    apiFetch<Event[]>('/api/admin/events', { token: token! }).then(setEvents).catch(console.error)
+    apiFetch<Event[]>('/api/admin/events', { token: token! })
+      .then(setEvents)
+      .catch(() => setFetchError('Nie udało się załadować wydarzeń.'))
+      .finally(() => setLoading(false))
   }, [token])
 
   async function handleDelete(id: number) {
@@ -26,6 +31,9 @@ export default function AdminEvents() {
       alert(e instanceof Error ? e.message : 'Błąd usuwania')
     }
   }
+
+  if (loading) return <div className="text-center py-20 text-gray-400">Ładowanie...</div>
+  if (fetchError) return <div className="text-center py-20 text-red-500">{fetchError}</div>
 
   return (
     <div>

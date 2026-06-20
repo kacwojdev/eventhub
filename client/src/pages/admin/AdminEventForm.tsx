@@ -43,11 +43,15 @@ export default function AdminEventForm() {
       if (imageFile) {
         const fd = new FormData()
         fd.append('image', imageFile)
-        await fetch(`/api/admin/events/${eventId}/image`, {
+        const res = await fetch(`/api/admin/events/${eventId}/image`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
           body: fd,
         })
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}))
+          throw new Error((body as { error?: string }).error ?? 'Nie udało się przesłać zdjęcia')
+        }
       }
       navigate('/admin/events')
     } catch (e: unknown) {
