@@ -21,15 +21,22 @@ export default function AdminEventForm() {
 
   useEffect(() => {
     if (!isEdit) return
-    apiFetch<EventData>(`/api/events/${id}`).then(ev => {
-      setForm({
-        title: ev.title, description: ev.description, location: ev.location,
-        date: new Date(ev.date).toISOString().slice(0, 16),
-        capacity: String(ev.capacity),
+    const controller = new AbortController()
+    apiFetch<EventData>(`/api/events/${id}`, { signal: controller.signal })
+      .then(ev => {
+        setForm({
+          title: ev.title, description: ev.description, location: ev.location,
+          date: new Date(ev.date).toISOString().slice(0, 16),
+          capacity: String(ev.capacity),
+        })
+        setCurrentImage(ev.imageUrl ?? null)
       })
-      setCurrentImage(ev.imageUrl ?? null)
-    }).catch(console.error)
-  }, [id, isEdit])
+      .catch((e: unknown) => {
+        if (e instanceof Error && e.name === 'AbortError') return
+        console.error(e)
+      })
+    return () => controller.abort()
+  }, [id, isEdit, token])
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault(); setError(''); setLoading(true)

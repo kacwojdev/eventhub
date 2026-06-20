@@ -16,10 +16,15 @@ export default function AdminEvents() {
   const [fetchError, setFetchError] = useState('')
 
   useEffect(() => {
-    apiFetch<Event[]>('/api/admin/events', { token: token! })
+    const controller = new AbortController()
+    apiFetch<Event[]>('/api/admin/events', { token: token!, signal: controller.signal })
       .then(setEvents)
-      .catch(() => setFetchError('Nie udało się załadować wydarzeń.'))
+      .catch((e: unknown) => {
+        if (e instanceof Error && e.name === 'AbortError') return
+        setFetchError('Nie udało się załadować wydarzeń.')
+      })
       .finally(() => setLoading(false))
+    return () => controller.abort()
   }, [token])
 
   async function handleDelete(id: number) {
