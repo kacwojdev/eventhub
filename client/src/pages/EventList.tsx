@@ -12,12 +12,17 @@ export default function EventList() {
   const [events, setEvents] = useState<Event[]>([])
   const [search, setSearch] = useState('')
   const [date, setDate] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    setIsLoading(true)
     const params = new URLSearchParams()
     if (search) params.set('search', search)
     if (date) params.set('date', new Date(date).toISOString())
-    apiFetch<Event[]>(`/api/events?${params}`).then(setEvents).catch(console.error)
+    apiFetch<Event[]>(`/api/events?${params}`)
+      .then(setEvents)
+      .catch(console.error)
+      .finally(() => setIsLoading(false))
   }, [search, date])
 
   return (
@@ -39,7 +44,9 @@ export default function EventList() {
           </button>
         )}
       </div>
-      {events.length === 0 ? (
+      {isLoading ? (
+        <p className="text-gray-400 text-center py-12">Ładowanie...</p>
+      ) : events.length === 0 ? (
         <p className="text-gray-500 text-center py-12">Brak wydarzeń</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -24,6 +24,7 @@ export default function EventDetail() {
   const [error, setError] = useState('')
 
   useEffect(() => {
+    setRegistered(false)
     apiFetch<Event>(`/api/events/${id}`).then(setEvent).catch(() => navigate('/events'))
     if (token && role === 'user') {
       apiFetch<Registration[]>('/api/me/registrations', { token })
@@ -45,9 +46,10 @@ export default function EventDetail() {
   }
 
   async function handleUnregister() {
+    if (!token) return
     setLoading(true); setError('')
     try {
-      await apiFetch(`/api/events/${id}/register`, { method: 'DELETE', token: token! })
+      await apiFetch(`/api/events/${id}/register`, { method: 'DELETE', token })
       setRegistered(false)
       setEvent(e => e ? { ...e, _count: { registrations: e._count.registrations - 1 } } : e)
     } catch (e: unknown) {
@@ -82,7 +84,7 @@ export default function EventDetail() {
           </button>
         )
       )}
-      {!token && !isFull && (
+      {!token && (
         <Link to="/login" className="inline-block bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
           Zaloguj się, aby zapisać
         </Link>
