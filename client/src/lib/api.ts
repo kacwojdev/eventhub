@@ -6,7 +6,9 @@ export async function apiFetch<T>(
   const res = await fetch(url, {
     ...rest,
     headers: {
-      'Content-Type': 'application/json',
+      ...(rest.body != null && !(rest.body instanceof FormData)
+        ? { 'Content-Type': 'application/json' }
+        : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(rest.headers || {}),
     },

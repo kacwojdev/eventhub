@@ -16,11 +16,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'))
   const [user, setUser] = useState<User | null>(() => {
     const u = localStorage.getItem('user')
-    return u ? JSON.parse(u) : null
+    try { return u ? JSON.parse(u) : null } catch { return null }
   })
-  const [role, setRole] = useState<'user' | 'admin' | null>(() =>
-    localStorage.getItem('role') as 'user' | 'admin' | null
-  )
+  const [role, setRole] = useState<'user' | 'admin' | null>(() => {
+    const r = localStorage.getItem('role')
+    return (r === 'user' || r === 'admin') ? r : null
+  })
 
   function login(token: string, user: User, role: 'user' | 'admin') {
     localStorage.setItem('token', token)

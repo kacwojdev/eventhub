@@ -21,11 +21,13 @@ export default function App() {
       <AuthProvider>
         <Routes>
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
-            <Route path="events" element={<AdminEvents />} />
-            <Route path="events/new" element={<AdminEventForm />} />
-            <Route path="events/:id/edit" element={<AdminEventForm />} />
-            <Route path="events/:id/participants" element={<AdminParticipants />} />
+          <Route path="/admin" element={<AdminRoute />}>
+            <Route element={<AdminLayout />}>
+              <Route path="events" element={<AdminEvents />} />
+              <Route path="events/new" element={<AdminEventForm />} />
+              <Route path="events/:id/edit" element={<AdminEventForm />} />
+              <Route path="events/:id/participants" element={<AdminParticipants />} />
+            </Route>
           </Route>
           <Route path="/" element={<><Navbar /><main className="max-w-6xl mx-auto px-4 py-8"><Home /></main></>} />
           <Route path="/events" element={<><Navbar /><main className="max-w-6xl mx-auto px-4 py-8"><EventList /></main></>} />
