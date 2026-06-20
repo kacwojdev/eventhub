@@ -1,60 +1,72 @@
 # EventHub
 
-EventHub to aplikacja webowa służąca do tworzenia wydarzeń oraz zarządzania zapisami uczestników. Projekt powstaje w ramach przedmiotu Techniki Internetowe.
-
-## Cel projektu
-
-Celem projektu jest stworzenie prostego systemu, który ułatwia organizowanie wydarzeń, takich jak spotkania, warsztaty, szkolenia lub wydarzenia studenckie. Aplikacja pozwala użytkownikom przeglądać dostępne wydarzenia i zapisywać się na nie, a organizatorom tworzyć wydarzenia oraz zarządzać listą uczestników.
-
-## Główne funkcje
-
-- rejestracja i logowanie użytkowników,
-- przeglądanie listy wydarzeń,
-- filtrowanie wydarzeń,
-- podgląd szczegółów wydarzenia,
-- zapisywanie się na wydarzenia,
-- tworzenie i edycja wydarzeń przez organizatora,
-- panel organizatora z listą uczestników.
+Aplikacja webowa do tworzenia wydarzeń i zarządzania zapisami uczestników.
 
 ## Technologie
 
-Projekt zostanie wykonany z użyciem następujących technologii:
+**Frontend:** React 18, TypeScript, Tailwind CSS, Vite, React Router  
+**Backend:** Node.js, Express, TypeScript, Prisma ORM  
+**Baza danych:** SQLite (plik lokalny, bez dodatkowej instalacji)
 
-### Frontend
+## Uruchomienie lokalne
 
-- React
-- TypeScript
-- React Router
-- Fetch API
-- CSS / Tailwind CSS
+### Wymagania
 
-### Backend
+- Node.js >= 18
+- npm >= 9
 
-- Node.js
-- Express.js
-- TypeScript
-- Prisma ORM
+### Kroki
 
-### Baza danych
+```bash
+# 1. Sklonuj repozytorium
+git clone <url-repozytorium>
+cd eventhub
 
-- PostgreSQL
+# 2. Zainstaluj zależności root
+npm install
 
-## Architektura projektu
+# 3. Zainstaluj zależności klienta
+cd client && npm install && cd ..
 
-Aplikacja będzie składać się z trzech głównych części:
+# 4. Zainstaluj zależności serwera i przygotuj bazę
+cd server && npm install
+npx prisma migrate dev --name init
+npm run seed
+cd ..
 
-1. **Frontend** — aplikacja SPA napisana w React, odpowiedzialna za interfejs użytkownika.
-2. **Backend** — serwer Express.js udostępniający REST API.
-3. **Baza danych** — PostgreSQL przechowujący dane użytkowników, wydarzeń oraz zapisów.
+# 5. Uruchom aplikację
+npm run dev
+```
 
-Frontend komunikuje się z backendem za pomocą zapytań HTTP do REST API. Backend obsługuje logikę aplikacji, walidację danych, autoryzację użytkowników oraz komunikację z bazą danych.
+Aplikacja dostępna pod:
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:3001
 
-## Struktura Projektu
+### Dane logowania
 
-```text
+| Rola | Email | Hasło |
+|------|-------|-------|
+| Administrator | admin@eventhub.pl | admin123 |
+
+Konto uczestnika należy zarejestrować przez formularz rejestracji.
+
+## Struktura projektu
+
+```
 eventhub/
-├── client/          # frontend React + TypeScript
-├── server/          # backend Express + TypeScript
-├── README.md
-└── package.json
+├── client/          # React + TypeScript + Tailwind (Vite)
+│   └── src/
+│       ├── components/
+│       ├── context/
+│       ├── lib/
+│       └── pages/
+├── server/          # Express + TypeScript + Prisma
+│   ├── prisma/      # schema.prisma, seed.ts, dev.db
+│   ├── src/
+│   │   ├── lib/
+│   │   ├── middleware/
+│   │   └── routes/
+│   └── uploads/     # przesłane obrazki
+├── docs/            # dokumentacja i specyfikacje
+└── README.md
 ```

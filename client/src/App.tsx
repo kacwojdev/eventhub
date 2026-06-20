@@ -14,6 +14,7 @@ import AdminLayout from './pages/admin/AdminLayout'
 import AdminEvents from './pages/admin/AdminEvents'
 import AdminEventForm from './pages/admin/AdminEventForm'
 import AdminParticipants from './pages/admin/AdminParticipants'
+import NotFound from './pages/NotFound'
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/login" element={<><Navbar /><main className="max-w-6xl mx-auto px-4 py-8"><Login /></main></>} />
           <Route path="/register" element={<><Navbar /><main className="max-w-6xl mx-auto px-4 py-8"><Register /></main></>} />
           <Route path="/my-registrations" element={<><Navbar /><main className="max-w-6xl mx-auto px-4 py-8"><PrivateRoute><MyRegistrations /></PrivateRoute></main></>} />
+          <Route path="*" element={<><Navbar /><main className="max-w-6xl mx-auto px-4 py-8"><NotFound /></main></>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
