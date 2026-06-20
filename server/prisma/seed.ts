@@ -40,8 +40,11 @@ async function main() {
     },
   ]
 
-  for (const event of events) {
-    await prisma.event.create({ data: event })
+  // Only seed events if none exist
+  if ((await prisma.event.count()) === 0) {
+    for (const event of events) {
+      await prisma.event.create({ data: event })
+    }
   }
 
   console.log('Seed complete. Admin: admin@eventhub.pl / admin123')

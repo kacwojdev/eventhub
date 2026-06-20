@@ -7,5 +7,9 @@ const adapter = new PrismaBetterSqlite3({
   url: path.join(__dirname, '../../prisma/dev.db'),
 })
 
-const prisma = new PrismaClient({ adapter })
+declare global { var __prisma: PrismaClient | undefined }
+
+const prisma = global.__prisma ?? new PrismaClient({ adapter })
+if (process.env.NODE_ENV !== 'production') global.__prisma = prisma
+
 export default prisma
