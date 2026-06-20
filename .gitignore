@@ -7,3 +7,7 @@ server/uploads/*
 !server/uploads/.gitkeep
 *.db
 *.db-journal
+
+# IntelliJ IDEA
+.idea/
+*.iml
