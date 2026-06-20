@@ -1,11 +1,16 @@
 import { Router, Response } from 'express'
+import { Prisma } from '@prisma/client'
 import prisma from '../lib/prisma'
 import { requireUser, AuthRequest } from '../middleware/auth'
 
 const router = Router()
 
 router.post('/events/:id/register', requireUser, async (req: AuthRequest, res: Response) => {
-  const eventId = parseInt(req.params.id)
+  const eventId = parseInt(String(req.params.id), 10)
+  if (isNaN(eventId)) {
+    res.status(400).json({ error: 'Invalid id' })
+    return
+  }
   const userId = req.userId!
 
   try {
@@ -23,9 +28,8 @@ router.post('/events/:id/register', requireUser, async (req: AuthRequest, res: R
     }
     const registration = await prisma.registration.create({ data: { userId, eventId } })
     res.status(201).json(registration)
-  } catch (err: unknown) {
-    // P2002 = unique constraint violation (already registered)
-    if (err instanceof Error && 'code' in err && (err as { code: string }).code === 'P2002') {
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
       res.status(409).json({ error: 'Already registered' })
       return
     }
@@ -34,7 +38,11 @@ router.post('/events/:id/register', requireUser, async (req: AuthRequest, res: R
 })
 
 router.delete('/events/:id/register', requireUser, async (req: AuthRequest, res: Response) => {
-  const eventId = parseInt(req.params.id)
+  const eventId = parseInt(String(req.params.id), 10)
+  if (isNaN(eventId)) {
+    res.status(400).json({ error: 'Invalid id' })
+    return
+  }
   const userId = req.userId!
 
   try {

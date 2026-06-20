@@ -21,7 +21,11 @@ router.get('/events', async (req: Request, res: Response) => {
 })
 
 router.get('/events/:id', async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id)
+  const id = parseInt(String(req.params.id), 10)
+  if (isNaN(id)) {
+    res.status(400).json({ error: 'Invalid id' })
+    return
+  }
   try {
     const event = await prisma.event.findUnique({
       where: { id },
