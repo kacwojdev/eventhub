@@ -1,3 +1,5 @@
+Link do repozytorum: https://github.com/kacwojdev/eventhub
+
 # EventHub
 
 Aplikacja webowa do tworzenia wydarzeń i zarządzania zapisami uczestników.
@@ -19,7 +21,7 @@ Aplikacja webowa do tworzenia wydarzeń i zarządzania zapisami uczestników.
 
 ```bash
 # 1. Sklonuj repozytorium
-git clone <url-repozytorium>
+git clone https://github.com/kacwojdev/eventhub
 cd eventhub
 
 # 2. Zainstaluj zależności root
@@ -49,6 +51,11 @@ Aplikacja dostępna pod:
 | Administrator | admin@eventhub.pl | admin123 |
 
 Konto uczestnika należy zarejestrować przez formularz rejestracji.
+
+## Dokumentacja
+
+- [Dokumentacja techniczna](docs/dokumentacja-techniczna.md) — architektura, baza danych, API endpoints
+- [Instrukcja użytkownika](docs/instrukcja-uzytkownika.md) — obsługa aplikacji krok po kroku
 
 ## Struktura projektu
 
